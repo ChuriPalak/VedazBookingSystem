@@ -1,0 +1,304 @@
+body {
+  font-family: Inter, Arial;
+  background: #f5f6fa;
+  margin: 0;
+}
+
+/* navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 30px;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+.logo {
+  color: #6c2bd9;
+}
+
+.nav-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.profile-img {
+  border-radius: 50%;
+}
+
+/* recent */
+.recent-section {
+  padding: 20px 30px;
+  background: white;
+}
+
+.recent-row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+}
+
+.recent-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+/* layout */
+.main-layout {
+  display: flex;
+}
+
+/* sidebar */
+.sidebar {
+  width: 260px;
+  background: white;
+  padding: 20px;
+  border-right: 1px solid #eee;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+.filter-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.apply-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  background: #6c2bd9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+/* grid */
+.experts-grid {
+  flex: 1;
+  padding: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.expert-card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.expert-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+}
+
+.category {
+  color: #666;
+}
+
+.rating {
+  color: #f5a623;
+  font-weight: bold;
+}
+
+/* ===== detail page ===== */
+
+.detail-container {
+  padding: 20px 30px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #6c2bd9;
+  cursor: pointer;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+.expert-header {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.detail-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+}
+
+.section {
+  margin-top: 25px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  background: #f0ebff;
+  color: #6c2bd9;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.review-item {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.review-item img {
+  border-radius: 50%;
+}
+
+/* right side */
+
+.contact-card {
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.booking-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.slot-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.slot {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+
+.confirm-btn {
+  width: 100%;
+  padding: 12px;
+  background: #6c2bd9;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* ===== modal ===== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.booking-modal {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  width: 380px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.booking-modal input,
+.booking-modal select,
+.booking-modal textarea {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.cancel-btn {
+  background: #eee;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ===== login ===== */
+
+.login-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f6fa;
+}
+
+.login-card {
+  width: 360px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-card input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.error-text {
+  color: red;
+  font-size: 14px;
+}
+
+.demo-box {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #666;
+}
