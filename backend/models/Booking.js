@@ -31,14 +31,14 @@ const bookingSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["Pending", "Confirmed", "Cancelled"],
+      enum: ["Pending", "Confirmed", "Cancelled", "Completed"],
       default: "Pending",
     },
   },
   { timestamps: true }
 );
 
-/* 🚨 VERY IMPORTANT — PREVENT DOUBLE BOOKING */
+/* 🚨 prevent double booking */
 bookingSchema.index(
   { expertId: 1, date: 1, timeSlot: 1 },
   { unique: true }

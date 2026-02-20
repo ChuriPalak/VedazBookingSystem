@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
 import "../styles/vedaz.css";
@@ -6,8 +7,9 @@ import "../styles/vedaz.css";
 export default function ExpertDashboard() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("All");
 
-  /* ================= FETCH BOOKINGS ================= */
+  /* ================= FETCH ================= */
 
   const fetchBookings = async () => {
     try {
@@ -15,7 +17,7 @@ export default function ExpertDashboard() {
       const res = await api.get("/bookings/expert");
       setBookings(res.data);
     } catch (err) {
-      console.error("Failed to fetch bookings", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -25,16 +27,38 @@ export default function ExpertDashboard() {
     fetchBookings();
   }, []);
 
-  /* ================= UPDATE STATUS ================= */
+  /* ================= SOCKET ================= */
+
+  useEffect(() => {
+    const socket = io("http://localhost:5000");
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    socket.emit("join-expert", user._id);
+
+    socket.on("new-booking", (booking) => {
+      setBookings((prev) => [booking, ...prev]);
+    });
+
+    return () => socket.disconnect();
+  }, []);
+
+  /* ================= STATUS UPDATE ================= */
 
   const updateStatus = async (id, status) => {
     try {
       await api.patch(`/bookings/${id}/status`, { status });
-      fetchBookings(); // refresh
+      fetchBookings();
     } catch (err) {
-      console.error("Status update failed", err);
+      console.error(err);
     }
   };
+
+  /* ================= FILTER ================= */
+
+  const filteredBookings =
+    statusFilter === "All"
+      ? bookings
+      : bookings.filter((b) => b.status === statusFilter);
 
   return (
     <>
@@ -43,63 +67,55 @@ export default function ExpertDashboard() {
       <div className="dashboard-container">
         <h2>Expert Dashboard</h2>
 
+        {/* 🔥 FILTER */}
+        <div className="status-filter">
+          {["All", "Pending", "Confirmed", "Cancelled", "Completed"].map(
+            (s) => (
+              <button
+                key={s}
+                className={statusFilter === s ? "active-filter" : ""}
+                onClick={() => setStatusFilter(s)}
+              >
+                {s}
+              </button>
+            )
+          )}
+        </div>
+
         {loading ? (
           <p>Loading bookings...</p>
-        ) : bookings.length === 0 ? (
+        ) : filteredBookings.length === 0 ? (
           <p>No booking requests yet</p>
         ) : (
           <div className="requests-table">
-            <div className="table-header">
-              <span>Customer</span>
-              <span>Date</span>
-              <span>Time</span>
-              <span>Notes</span>
-              <span>Status</span>
-              <span>Action</span>
-            </div>
-
-            {bookings.map((b) => (
+            {filteredBookings.map((b) => (
               <div key={b._id} className="table-row">
                 <span>{b.customerId?.name || "User"}</span>
                 <span>{b.date}</span>
                 <span>{b.timeSlot}</span>
-                <span>{b.notes || "-"}</span>
+                <span>{b.status}</span>
 
-                <span
-                  className={
-                    b.status === "Confirmed"
-                      ? "confirmed"
-                      : b.status === "Cancelled"
-                      ? "cancelled"
-                      : "pending"
-                  }
-                >
-                  {b.status}
-                </span>
+                {b.status === "Pending" && (
+                  <div>
+                    <button
+                      className="confirm-btn small"
+                      onClick={() =>
+                        updateStatus(b._id, "Confirmed")
+                      }
+                    >
+                      Confirm
+                    </button>
 
-                <div className="action-buttons">
-                  {b.status === "Pending" && (
-                    <>
-                      <button
-                        className="confirm-btn small"
-                        onClick={() =>
-                          updateStatus(b._id, "Confirmed")
-                        }
-                      >
-                        Confirm
-                      </button>
-
-                      <button
-                        className="cancel-btn small"
-                        onClick={() =>
-                          updateStatus(b._id, "Cancelled")
-                        }
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  )}
-                </div>
+                    <button
+                      className="cancel-btn small"
+                      onClick={() =>
+                        updateStatus(b._id, "Cancelled")
+                      }
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

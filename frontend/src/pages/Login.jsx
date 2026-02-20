@@ -19,29 +19,31 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  try {
+    setLoading(true);
+    setError("");
 
-      const res = await api.post("/auth/login", form);
+    // ✅ IMPORTANT: clear old auth first
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
-      // ✅ store token
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+    const res = await api.post("/auth/login", form);
 
-      // ✅ role-based redirect (FIXED)
-      if (res.data.user.role === "expert") {
-        navigate("/expert-dashboard");
-      } else {
-        navigate("/home"); // ⭐ IMPORTANT FIX
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+
+    if (res.data.user.role === "expert") {
+      navigate("/expert-dashboard");
+    } else {
+      navigate("/home");
     }
-  };
-
+  } catch (err) {
+    console.log(err);
+    setError(err.response?.data?.message || "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="login-page">
       <div className="login-card">

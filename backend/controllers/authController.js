@@ -30,21 +30,26 @@ export const register = async (req, res) => {
 /* ================= LOGIN ================= */
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-  if (!user) {
-    return res.status(400).json({ message: "Invalid credentials" });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // ⭐ IMPORTANT — plain compare because seed is plain text
+    if (password !== user.password) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    res.json({
+      token: generateToken(user),
+      user,
+    });
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    res.status(500).json({ message: "Server error" });
   }
-
-  // ✅ TEMP DEV FIX (since seed passwords are plain text)
-  if (password !== user.password) {
-    return res.status(400).json({ message: "Invalid credentials" });
-  }
-
-  res.json({
-    token: generateToken(user),
-    user,
-  });
 };
