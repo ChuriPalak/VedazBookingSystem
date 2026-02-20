@@ -302,3 +302,58 @@ body {
   font-size: 12px;
   color: #666;
 }
+
+/* ===== expert dashboard ===== */
+
+.dashboard-container {
+  padding: 30px;
+}
+
+.requests-table {
+  background: white;
+  border-radius: 14px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 2fr 1fr 1.5fr;
+  padding: 14px 18px;
+  align-items: center;
+}
+
+.table-header {
+  background: #f3f0ff;
+  font-weight: 600;
+}
+
+.table-row {
+  border-top: 1px solid #eee;
+}
+
+.pending {
+  color: #f5a623;
+  font-weight: 600;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.small {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.confirmed {
+  color: green;
+  font-weight: 600;
+}
+
+.cancelled {
+  color: red;
+  font-weight: 600;
+}

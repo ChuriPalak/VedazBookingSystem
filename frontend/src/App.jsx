@@ -2,8 +2,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ExpertsPage from "./pages/ExpertsPage";
 import ExpertDetail from "./pages/ExpertDetail";
 import Login from "./pages/Login";
+import ExpertDashboard from "./pages/ExpertDashboard";
 
-/* 🔒 Simple auth guard (basic version) */
+/* 🔒 Simple auth guard */
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" />;
@@ -13,12 +14,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 🔐 Login */}
+        {/* 🔐 Login (ENTRY POINT) */}
         <Route path="/login" element={<Login />} />
 
-        {/* 👤 Customer pages */}
+        {/* 🔁 Default route → login */}
+        <Route path="/" element={<Navigate to="/login" />} />
+
+        {/* 👤 Customer Home */}
         <Route
-          path="/"
+          path="/home"
           element={
             <ProtectedRoute>
               <ExpertsPage />
@@ -26,6 +30,7 @@ function App() {
           }
         />
 
+        {/* 👤 Expert detail page */}
         <Route
           path="/expert/:id"
           element={
@@ -34,6 +39,19 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* 🧑‍⚕️ Expert Dashboard */}
+        <Route
+          path="/expert-dashboard"
+          element={
+            <ProtectedRoute>
+              <ExpertDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ❌ Catch all */}
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );

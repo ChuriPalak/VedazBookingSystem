@@ -29,11 +29,11 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // ✅ role-based redirect
+      // ✅ role-based redirect (FIXED)
       if (res.data.user.role === "expert") {
         navigate("/expert-dashboard");
       } else {
-        navigate("/");
+        navigate("/home"); // ⭐ IMPORTANT FIX
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
@@ -53,6 +53,7 @@ export default function Login() {
         <input
           name="email"
           placeholder="Enter email"
+          value={form.email}
           onChange={handleChange}
         />
 
@@ -61,6 +62,7 @@ export default function Login() {
           type="password"
           name="password"
           placeholder="Enter password"
+          value={form.password}
           onChange={handleChange}
         />
 
