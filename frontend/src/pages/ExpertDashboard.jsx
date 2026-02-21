@@ -12,17 +12,13 @@ export default function ExpertDashboard() {
   /* ================= FETCH ================= */
 
   const fetchBookings = async () => {
-    try {
-      setLoading(true);
-      const res = await api.get("/bookings/expert");
-      setBookings(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  try {
+    const res = await api.get("/bookings/expert");
+    setBookings(res.data);
+  } catch (err) {
+    console.error("Failed to fetch bookings", err);
+  }
+};
   useEffect(() => {
     fetchBookings();
   }, []);

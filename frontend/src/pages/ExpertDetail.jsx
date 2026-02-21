@@ -6,12 +6,11 @@ import BookingModal from "../components/BookingModal";
 
 export default function ExpertDetail() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams(); // ⭐ THIS IS THE REAL EXPERT ID
 
-  // ✅ modal state (MISSING BEFORE)
   const [openModal, setOpenModal] = useState(false);
 
-  // 🔥 dummy data (replace with API later)
+  // 🔥 dummy data (UI only)
   const expert = {
     name: "Dr. Shalini Sharma",
     category: "Vedic Astrologer",
@@ -108,7 +107,6 @@ export default function ExpertDetail() {
                 <button className="slot">4:00 PM</button>
               </div>
 
-              {/* ✅ FIXED BUTTON */}
               <button
                 className="confirm-btn"
                 onClick={() => setOpenModal(true)}
@@ -120,12 +118,13 @@ export default function ExpertDetail() {
         </div>
       </div>
 
-      {/* ✅ MODAL RENDER (MISSING BEFORE) */}
-      <BookingModal
-        isOpen={openModal}
-        onClose={() => setOpenModal(false)}
-        expert={expert}
-      />
+      {/* ✅ ONLY render when open */}
+      {openModal && (
+        <BookingModal
+          expertId={id} // ⭐⭐⭐ THIS FIXES YOUR BUG
+          onClose={() => setOpenModal(false)}
+        />
+      )}
     </>
   );
 }

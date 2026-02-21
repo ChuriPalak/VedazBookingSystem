@@ -1,7 +1,6 @@
 import Booking from "../models/Booking.js";
-import { getIO } from "../socket/socket.js";
 import Expert from "../expert/Expert.js";
-
+import { getIO } from "../socket/socket.js";
 
 /* ================= CREATE BOOKING ================= */
 
@@ -11,7 +10,7 @@ export const createBooking = async (req, res) => {
 
     const booking = await Booking.create({
       expertId,
-      customerId: req.user.id,
+      customerId: req.user._id,
       date,
       timeSlot,
       name,
@@ -20,9 +19,11 @@ export const createBooking = async (req, res) => {
       notes,
     });
 
-    /* 🔥 REALTIME EMIT */
+    // 🔥 realtime emit to expert room
     const io = getIO();
-    io.to(expertId.toString()).emit("new-booking", booking);
+    if (io) {
+      io.to(expertId.toString()).emit("new-booking", booking);
+    }
 
     res.status(201).json(booking);
   } catch (err) {
@@ -40,15 +41,18 @@ export const createBooking = async (req, res) => {
 
 /* ================= EXPERT BOOKINGS ================= */
 
-
-
 export const getExpertBookings = async (req, res) => {
   try {
-    // ⭐ find expert profile linked to this user
-    const expert = await Expert.findOne({ userId: req.user.id });
+    console.log("🔥 Logged in user:", req.user._id);
+
+    const expert = await Expert.findOne({ userId: req.user._id });
+
+    console.log("🔥 Found expert:", expert?._id);
 
     if (!expert) {
-      return res.status(404).json({ message: "Expert profile not found" });
+      return res.status(404).json({
+        message: "Expert profile not found for this user",
+      });
     }
 
     const bookings = await Booking.find({
@@ -56,6 +60,8 @@ export const getExpertBookings = async (req, res) => {
     })
       .populate("customerId", "name email")
       .sort({ createdAt: -1 });
+
+    console.log("🔥 Bookings found:", bookings.length);
 
     res.json(bookings);
   } catch (err) {
@@ -76,8 +82,25 @@ export const updateBookingStatus = async (req, res) => {
       { new: true }
     );
 
+    /* 🔥🔥🔥 REALTIME EMIT TO CUSTOMER */
+
+    const io = getIO();
+
+    if (io && booking) {
+      console.log(
+        "📡 Emitting to customer:",
+        booking.customerId.toString()
+      );
+
+      io.to(booking.customerId.toString()).emit(
+        "booking-status-updated",
+        booking
+      );
+    }
+
     res.json(booking);
   } catch (err) {
+    console.error("Status update failed:", err);
     res.status(500).json({ message: "Status update failed" });
   }
 };

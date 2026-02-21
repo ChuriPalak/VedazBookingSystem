@@ -4,6 +4,7 @@ import RecentExperts from "../components/RecentExperts";
 import FilterSidebar from "../components/FilterSidebar";
 import ExpertCard from "../components/ExpertCard";
 import api from "../services/api";
+import socket from "../socket"; // ⭐ IMPORTANT
 import "../styles/vedaz.css";
 
 const demoExperts = [
@@ -37,7 +38,8 @@ export default function ExpertsPage() {
   const [experts, setExperts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔥 fetch experts
+  /* ================= FETCH EXPERTS ================= */
+
   const fetchExperts = async (filterParams = {}) => {
     try {
       setLoading(true);
@@ -47,21 +49,46 @@ export default function ExpertsPage() {
 
       const data = res.data?.experts || res.data || [];
 
-      // ✅ fallback if empty
       setExperts(data.length ? data : demoExperts);
     } catch (err) {
       console.error("Error fetching experts", err);
-
-      // 🚨 CRITICAL FIX — fallback on error
       setExperts(demoExperts);
     } finally {
       setLoading(false);
     }
   };
 
+  /* ================= INITIAL LOAD ================= */
+
   useEffect(() => {
     fetchExperts();
   }, []);
+
+  /* ================= 🔔 CUSTOMER SOCKET LISTENER ================= */
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    // ✅ join customer room
+    if (user?._id) {
+      socket.emit("join-room", user._id);
+      console.log("Customer joined room:", user._id);
+    }
+
+    // ✅ listen for expert confirmation
+    socket.on("booking-status-updated", (booking) => {
+      console.log("🔔 Booking update received:", booking);
+
+      // simple alert (you can upgrade to toast later)
+      alert(`Your booking is ${booking.status}`);
+    });
+
+    return () => {
+      socket.off("booking-status-updated");
+    };
+  }, []);
+
+  /* ================= UI ================= */
 
   return (
     <>
@@ -75,6 +102,8 @@ export default function ExpertsPage() {
         <div className="experts-grid">
           {loading ? (
             <p>Loading experts...</p>
+          ) : experts.length === 0 ? (
+            <p>No experts found</p>
           ) : (
             experts.map((e) => (
               <ExpertCard key={e._id} expert={e} />
